@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import Tabs from "@/layout/components/tabs/tabs";
-import TabsPanes from "@/layout/components/tabs/tabPanes";
+import Tabs from "@/components/tabs/tabs";
+import TabsPanes from "@/components/tabs/tabPanes";
 export default {
   components: {
     Tabs,

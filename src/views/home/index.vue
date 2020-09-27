@@ -3,15 +3,35 @@
     <!-- <router-view></router-view> -->
 
     <div class="col">
-      <div class="banner">
-        <div class="honour">
-          <h3 class="honour-title">工作室荣誉</h3>
-          <div class="honour-content" v-for="item in honourList">
-            <img src="@/assets/image/0.jpg" alt />
-            <div class="content-r">
-              <div class="detail">{{item.createtime}}</div>
+      <div
+        v-for="(item, index) in list"
+        :key="item.id"
+        class="article_content wow bounceInUp"
+        ref="con"
+      >
+        <div class="artilcl">
+          <nuxt-link :to="'/article/'" tag="h2">
+            <img :src="item.pic" class="image" />
+          </nuxt-link>
+        </div>
 
-              <div class="detail">{{item.detail}}</div>
+        <div class="description">
+          <nuxt-link :to="'/article/'" tag="h2" class="overtext">
+            <span class="isTop" v-if="item.stay_at_top">置顶</span>
+            <span>{{ item }}</span>
+          </nuxt-link>
+          <div class="article_b">
+            <div class="overtext article-content">{{ item }}</div>
+            <div class="bottom clearfix">
+              <p class="author">
+                <i class="el-icon-s-custom"></i>
+                {{ item }}
+              </p>
+              <span class="createtime">
+                <i class="el-icon-date"></i>
+                {{ item }}
+              </span>
+              <span>{{ item }}次观看</span>
             </div>
           </div>
         </div>

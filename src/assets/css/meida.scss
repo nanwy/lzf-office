@@ -1,0 +1,17 @@
+@media screen and (min-width: 1440px) {
+  .login-dialog .el-dialog {
+    width: 50% !important;
+  }
+}
+
+@media screen and (max-width: 1440px) {
+  .login-dialog .el-dialog {
+    width: 60% !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .login-dialog .el-dialog {
+    width: 90% !important;
+  }
+}

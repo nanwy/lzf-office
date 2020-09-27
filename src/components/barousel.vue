@@ -25,8 +25,8 @@
           @mouseenter.prevent="mouse(index)"
         ></span>
       </div>
-      <i v-show="arrow" class="iconfont icon-left" @click="prev()"><</i>
-      <i v-show="arrow" class="iconfont icon-right" @click="next()">></i>
+      <div v-show="arrow" class="iconfont icon-left" @click="prev()"><</div>
+      <div v-show="arrow" class="iconfont icon-right" @click="next()">></div>
     </div>
   </div>
 </template>
@@ -89,7 +89,7 @@ export default {
     sliderStyle() {
       return {
         width: this.width ? this.width + "px" : "100%",
-        height: this.height ? this.height + "px" : "100%",
+        height: this.height ? this.height + "px" : "calc(100vw / 2.57)",
         perspective: this.width + "px",
         backgroundSize:
           this.imgType == "percentage" ? "100% 100%" : this.imgType,
@@ -178,12 +178,13 @@ export default {
   width: 100%;
   height: 300px;
   text-align: center;
-  padding: 10px 0;
+  padding-bottom: 10px;
   position: relative;
+  background-color: #ded9d3;
   .slider-content {
     position: relative;
     width: 100%;
-    height: calc(100% - 20px);
+    height: 100%;
     left: 0%;
     top: 0%;
     margin: 0px;
@@ -198,7 +199,8 @@ export default {
     left: 50%;
     width: 100%;
     height: 100%;
-    transition: 200ms all cubic-bezier(1, -0.04, 1, 0.8);
+    // transition: 200ms all cubic-bezier(1, -0.04, 1, 0.8);
+    transition-duration: 300ms;
     background-color: #fff;
     background-repeat: no-repeat;
     background-position: center;
@@ -213,7 +215,7 @@ export default {
     // transform-origin: 0 100px;
     z-index: 20;
     opacity: 1;
-    transition: all 2s;
+    transition-duration: 300ms;
     // filter: blur(2px);
   }
   .prev {
@@ -230,17 +232,18 @@ export default {
 
     filter: brightness(0.3);
   }
-  i {
+  .iconfont {
     width: 17.5%;
     // display: none;
     position: absolute;
     // top: 40%;
     height: 100%;
-    font-size: 22px;
+    font-size: 62px;
     color: rgba(255, 255, 255, 0.5);
     text-shadow: 0 0 24px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     z-index: 21;
+    line-height: calc(100vw / 2.57);
   }
   .icon-left {
     left: 0;

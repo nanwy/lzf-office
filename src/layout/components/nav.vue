@@ -7,23 +7,162 @@
             <div
               ref="nav"
               class="n-btn"
-              v-for="(item,index) in navLinks"
+              v-for="(item, index) in navLinks"
               :key="index"
-              @click="toPage(item,index)"
-              @mouseover="mouseIn(item,index)"
-              :class="{'n-active':activeIndex === index}"
+              @click="toPage(item, index)"
+              @mouseover="mouseIn(item, index)"
+              :class="{ 'n-active': activeIndex === index }"
             >
-              <span class="n-text">{{item.name}}</span>
+              <span class="n-text">{{ item.name }}</span>
             </div>
-            <div class="n-cursor" :style="{width: `${width}px`, left:`${left}px`}"></div>
+            <div
+              class="n-cursor"
+              :style="{ width: `${width}px`, left: `${left}px` }"
+            ></div>
           </div>
         </div>
       </div>
+      <!-- <div id="pause" class="btn login" @click="dialogVisible = true">登录</div> -->
+      <nan-button
+        class="login"
+        type="primary"
+        size="small"
+        @click="dialogVisible = true"
+        >登录</nan-button
+      >
     </div>
+    <transition name="dialog-fade">
+      <div class="login-dialog" key="5" v-show="dialogVisible">
+        <transition name="slide">
+          <login-dialog
+            title="登录"
+            :modal-append-to-body="false"
+            :visible.sync="dialogVisible"
+            width="30%"
+            v-if="isLogin"
+          >
+            <form class="form-confirm" ref="submiti">
+              <LoginInput
+                v-model="uname"
+                :width="100"
+                @blur="blur"
+                @focus="focuClass = true"
+              >
+                <span class="from" data-placeholder="请输入账号"></span>
+              </LoginInput>
+
+              <LoginInput
+                v-model="uname"
+                :width="100"
+                @blur="blur"
+                showPassword
+              >
+                <span class="from" data-placeholder="请输入密码"></span>
+              </LoginInput>
+              <div class="code">
+                <LoginInput
+                  v-model="uname"
+                  @blur="blur"
+                  showPassword
+                  style="width: calc(100% - 52px)"
+                >
+                  <span class="from" data-placeholder="请输入验证码"></span>
+                </LoginInput>
+                <div class="login-code" @click="refreshCode">
+                  <Identify
+                    :identifyCode="identifyCode"
+                    :fontSizeMin="12"
+                    :fontSizeMax="22"
+                  ></Identify>
+                </div>
+              </div>
+            </form>
+
+            <span slot="footer" class="dialog-footer">
+              <nan-button
+                class="login"
+                type="success"
+                size="small"
+                @click="submit"
+                >登录</nan-button
+              >
+              <nan-button
+                class="login"
+                type="primary"
+                size="small"
+                @click="isLogin = false"
+                >去注册</nan-button
+              >
+              <div @click="dialogVisible = false">取消</div>
+            </span>
+          </login-dialog>
+        </transition>
+        <transition name="slide">
+          <login-dialog
+            title="登录"
+            :modal-append-to-body="false"
+            :visible.sync="dialogVisible"
+            v-if="!isLogin"
+            key="2"
+            width="30%"
+          >
+            <LoginInput
+              v-model="uname"
+              :width="100"
+              @blur="blur"
+              @focus="focuClass = true"
+            >
+              <span class="from" data-placeholder="请输入账号"></span>
+            </LoginInput>
+
+            <LoginInput v-model="uname" :width="100" @blur="blur" showPassword>
+              <span class="from" data-placeholder="请输入密码"></span>
+            </LoginInput>
+            <div class="code">
+              <LoginInput
+                v-model="uname"
+                @blur="blur"
+                showPassword
+                style="width: calc(100% - 52px)"
+              >
+                <span class="from" data-placeholder="请输入验证码"></span>
+              </LoginInput>
+              <div class="login-code" @click="refreshCode">
+                <Identify
+                  :identifyCode="identifyCode"
+                  :fontSizeMin="12"
+                  :fontSizeMax="22"
+                ></Identify>
+              </div>
+            </div>
+
+            <span slot="footer" class="dialog-footer">
+              <nan-button
+                class="login"
+                type="success"
+                size="small"
+                @click="isLogin = true"
+                >去登录</nan-button
+              >
+              <nan-button class="login" type="primary" size="small"
+                >注册</nan-button
+              >
+            </span>
+          </login-dialog>
+        </transition>
+        <transition name="v-modal">
+          <div class="v-modal" v-show="dialogVisible"></div>
+        </transition>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
+import LoginDialog from "@/components/dialog";
+import Identify from "@/components/identify";
+import LoginInput from "@/components/from/input";
+import NanButton from "@/components/Button";
 export default {
   data() {
     return {
@@ -59,7 +198,20 @@ export default {
       widthEnd: 0,
       leftEnd: 0,
       activeIndex: 0,
+      dialogVisible: false,
+      identifyCodes: "吉林化工学院凌之风工作室",
+      identifyCode: "",
+      uname: "",
+      focuClass: false,
+      blurClass: false,
+      isLogin: true,
     };
+  },
+  components: {
+    LoginDialog,
+    Identify,
+    LoginInput,
+    NanButton,
   },
   watch: {
     $route(to, from) {
@@ -85,6 +237,8 @@ export default {
   mounted() {
     // 初始化选中菜单
     this.__initNavBar();
+    this.refreshCode();
+    console.log(this.identifyCode);
     // this.left = this.$refs.nav[0].offsetLeft;
     // this.width = this.$refs.nav[0].offsetWidth;
     // this.leftEnd = this.$refs.nav[0].offsetLeft;
@@ -99,6 +253,25 @@ export default {
   },
 
   methods: {
+    submit(name) {
+      console.log(this.$refs["submiti"].validate((valid) => {}));
+    },
+    blur() {},
+    refreshCode() {
+      this.identifyCode = "";
+      this.makeCode(this.identifyCodes, 4);
+      console.log(this.identifyCode);
+    },
+    makeCode(o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[
+          this.randomNum(0, this.identifyCodes.length)
+        ];
+      }
+    },
+    randomNum(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+    },
     moveBarLeft(index) {
       // console.log("index", index, this.$refs.nav[index].offsetLeft);
       return this.$refs.nav[index].offsetLeft;
@@ -154,20 +327,96 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.login-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+}
+// .dialog-fade-enter-active {
+//   animation: dialog-fade-in 3s;
+// }
+
+// .dialog-fade-leave-active {
+//   animation: dialog-fade-out 3s;
+// }
+
+// @keyframes dialog-fade-in {
+//   0% {
+//     transform: translate3d(0, -20px, 0);
+//     opacity: 0;
+//   }
+//   100% {
+//     transform: translate3d(0, 0, 0);
+//     opacity: 1;
+//   }
+// }
+
+// @keyframes dialog-fade-out {
+//   0% {
+//     transform: translate3d(0, 0, 0);
+//     opacity: 1;
+//   }
+//   100% {
+//     transform: translate3d(0, -20px, 0);
+//     opacity: 0;
+//   }
+// }
+.dialog-fade-enter-active,
+.dialog-fade-leave-active {
+  transition: all 0.3s;
+}
+.dialog-fade-enter {
+  // transform: translateY(-100px);
+  opacity: 0;
+}
+.dialog-fade-leave-to {
+  // transform: translateY(100px);
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s;
+}
+.slide-enter {
+  transform: translateX(-100%);
+}
+.slide-leave-to {
+  transform: translateX(100%);
+}
 .n-text {
   color: #a0a0a1;
   font-size: 14px;
   transition: all 0.2s;
 }
+.slide {
+  transform: translateX(-100%);
+}
 .title {
+}
+.from::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  padding: 10px 0;
+  transition: all 0.5s ease-in-out;
+  pointer-events: none;
 }
 .navigator {
   margin-bottom: 10px;
   position: relative;
   overflow: hidden;
   background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   .wrapper {
-    width: 1100px;
+    // width: 1100px;
     margin: 0 auto;
     position: relative;
     .n-inner {
@@ -225,6 +474,24 @@ export default {
         }
       }
     }
+  }
+  .login {
+    margin: 0 10px;
+  }
+}
+
+.focus {
+  top: -18px;
+  font-size: 12px;
+  left: 0;
+  color: #03a9f4;
+}
+.code {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .login-code {
+    margin-top: 10px;
   }
 }
 </style>
