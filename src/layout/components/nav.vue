@@ -40,8 +40,9 @@
             :visible.sync="dialogVisible"
             width="30%"
             v-if="isLogin"
+            ref="submiti"
           >
-            <form class="form-confirm" ref="submiti">
+            <form class="form-confirm">
               <LoginInput
                 v-model="uname"
                 :width="100"
@@ -254,7 +255,7 @@ export default {
 
   methods: {
     submit(name) {
-      console.log(this.$refs["submiti"].validate((valid) => {}));
+      console.log(this.$refs["submiti"]);
     },
     blur() {},
     refreshCode() {
